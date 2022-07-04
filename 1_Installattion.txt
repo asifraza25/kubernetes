@@ -1,0 +1,103 @@
+Lab setup
+Master - 4GB RAM, 
+Worker - 
+
+
+====== Master Node installation & setup ======
+
+API
+Scheduler
+controller
+Etcd
+
+Installation of Master Node can be two way.
+    1. systemd mode/ Monolythic way : hardway mode
+    2. container mode: control plane    (Now, this is mostly use in industry)
+
+    Below service can be run in Container mode
+    kube-proxy
+    kube-Etcd
+    kube-Scheduler
+    kube-api 
+    kube-controller
+
+    Below service always run as a Systemd mode: either Master/Worker Node:
+    kubelet
+    docker
+
+No of Master Node in cluster are taken on Quaram formula
+
+# Installion of Master Node in Control Plane mode via kubeadm mode.
+
+    Pre installation
+        change hostname
+        change /etc/hosts so that node can be ping via name
+        disable selinux
+        disable swap in all machine
+
+    1. Install docker
+            - Add docker repo
+            - yum install docker
+            - start and enable docker
+
+    2. Install kubelet
+            - Add kubelet repo from kubernetes site.
+            - yum install kubelet -y 
+            - start and enable kubelet
+    
+    3. Install 4 component.
+        
+        we will install 4 component form kubeadm utility
+        - yum install kubeadm -y 
+        
+        Now install 4 component using kubeadm
+            $ kubeadm init
+
+    verify the installation
+        - $ netstat -tlpn   (etcd, kube-proxy, kbelet, api-controller, kube-Scheduler)
+        - $ kubectl get nodes
+        - $ kubectl get pod -n kube-system 
+
+        provide kubectl api information to run kubectl command
+        - $ ls -l /etc/kubernetes/admin.conf
+        - 1. $ kubectl get nodes --kubeconfig=/etc/kubernetes/admin.conf
+                    OR
+        - 2.  $ mkdir ~/.kube
+        - $ cp /etc/kubernetes/admin.conf ~/.kube/config
+                    OR
+        Make it permament
+        - 3.  $ export KUBECONFIG=/etc/kubernetes/admin.conf
+        - $ kubectl get nodes
+
+
+        - $ kubectl get ns
+        - $ kubectl get pod -n kube-system 
+        - $ kubectl get pod --all-namespaces
+
+
+# configure worker node 
+
+1. Install docker
+
+2. Install kubelet
+
+3. Install kubeadm but don't initialize it.(kubeadm init (not required))
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+

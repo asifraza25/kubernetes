@@ -1,0 +1,7 @@
+
+ReplicaSet  ?? 
+
+RC: works on equity based selector
+
+RS: RC + set based selector
+

@@ -1,0 +1,32 @@
+
+Label & selector meaning in pod.yml and rc.yml ?
+
+Lab1: Deploy three pods with three different labels(like red, green, yellow) and names(pod1, pod2, pod3) using pod.yaml files.
+
+$ kubectl get pod --show-labels
+
+$ kubectl get po -l color=red
+
+Lab2: Rc.yml similarly labels are applied on RC 
+
+
+Selector ??
+
+Lab3: Create a pod with pod.yml and label it as nginx with xyz name
+      Now create three pod with RC with same label nginx and selector nginx.
+
+      Now only two pod will launch and pre-existing pods will be included in RC.
+      Because RC create pod with selector and label of RC files.
+
+      - delete pod xyz pod. RC will automatically create pods. 
+      - 
+
+      $ kubectl describe pod xyz | grep controll  
+      $ kubectl get po --show-labels
+      $ kubectl get po -l 
+      $ kubectl delete pod --all
+      
+      
+      
+
+

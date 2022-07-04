@@ -1,0 +1,58 @@
+
+Kubectl ? 
+
+1. command line method
+
+    Lab1: How to create simple first app in kubernetes?
+
+        $ kubectl run test --image=docker.io/nginx 
+
+        $ kubectl exec -it  test /bin/bash
+
+        $ kubectl logs test
+
+        $ kubectl delete pod test
+
+        $ kubectl get events
+
+2. File method
+
+    $ kubectl run test --image=nginx --dry-run -o yaml 
+
+    $ kubectl run test --image=nginx --dry-run -o yaml > test.yml
+
+    $ kubectl create -f test.yml
+
+    $ kubectl delete -f pod.yml
+
+    $ kubectl api-resources         ==> list all resources of kubectl
+
+    $ kubectl explain pod
+
+    $ kubectl explain pod.explain
+
+    Lab2: How to enable HA/Scalability/recovery/
+        
+        RC: Replication controller : It's an pod controller which maintain your pod state and scalability.
+            
+            Get RC yaml file from url: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/
+
+    $ kubectl get rc -o yaml > rc_backup.yaml
+
+    $ kubectl get rc example.com
+
+    $ kubectl delete rc example
+
+    $ kubectl describe rc example
+
+    $ kubectl scale --replicas=4 rc example   # we can also scale up & down via rc or etcd file
+
+    $ kubectl edit rc example    # Not recomended to change etcd from this command
+
+
+
+
+
+
+        
+

@@ -1,0 +1,76 @@
+
+Rolling Update & Rollback
+
+Moving Image V.1. to V.2  and vice-verca
+
+Deployment Controller = RC + RS + Rollout & Rollback
+
+Lab1: Deploy pods using Deployment Controller. Use yaml file from official page.
+
+    $ kubectl apply -f deployment.yml
+
+    $ kubectl get deploy -o wide
+
+    $ kubectl delete pod pod_name   # It will automatically deploy pod to desire numbers.
+
+    $ kubectl delete deploy example
+
+    $ kubectl delete deploy --all 
+
+
+Lab2: Deploy pods with previous version of image. for ex nginx:1.14.2
+     
+     $ kubectl rollout history deploy example.com
+     $ kubectl describe deploy example.com | grep -i image      # check the version of image
+
+     By default it will use blue-green RollingUpdateStrategy to rolling update with 25%
+
+     $ $ kubectl describe deploy example.com | grep -i max  # get the percent of RollingUpdateStrategy
+
+        --------- RollingUpdate ----------
+
+     $ watch kubectl get pods
+
+     # login with other terminal for RollingUpdate
+
+     $ kubectl set image deploy example.com nginx=nginx:1.18 --record     # Here  {nginx(container_name)=nginx:1.18(image_version)} 
+        
+        -- record # will record the version of image in details
+        
+        we can also use yaml method
+        $ kubectl edit deploy example.com   # Now change the image version, we can also change the folmula
+            OR
+        $ kubectl apply -f deploy.yml  # After changing image version in yaml file
+
+
+        verify RollingUpdate
+
+     $ kubectl describe deploy example.com | grep -i image 
+     $ kubectl rollout history deploy example.com
+
+
+    --------- RollingUpdate ----------
+
+     $ kubectl rollout undo deploy example.com   # By default to previous version
+
+     $ kubectl rollout undo deploy example.com --to-revision=1   # To specific revision version
+
+
+Deployment automatically create RS, thats why it provide the property of RS
+
+RC & RS can't be created with command line but deployment is possible 
+    $ kubectl create deploy example.com --image=nginx 
+    $ kubectl get deploy 
+
+
+
+
+
+
+
+
+
+
+
+
+
