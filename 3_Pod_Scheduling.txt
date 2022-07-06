@@ -1,0 +1,83 @@
+
+Pod Scheduling 
+    
+    1. Node Name based Scheduling (Not used in industry))
+        - Drawback: we cna choose only one node at a time and if that nodes goes down, pod will be also in pending mode. So generally not used in industry.
+        - In nodeName based Scheduling API don't ask with scheduler. API directly deploy as per nodeName.
+        
+        spec:
+            nodeName: worker2.example.com
+            containers:
+        
+
+    2. Label Node and Pod Selector based 
+
+        Label the nodes (eg. web, app, db)
+        Give the selector on pods (To deploy pod on selected nodes)
+    
+        $ kubectl label nodes worker2.example.com role=database
+        $ kubectl get nodes -L roles    OR $ kubectl get nodes --show-labesl        # To show labels 
+
+        spec:
+            containers:
+                nodeSelector:
+                    role: database 
+                - image: nginx
+                  name: nginx 
+        
+        $ kubectl create -f deploy.yml      # pod will deploy on worker2 only.
+
+        $ kubectl describe node worker1.example.com     OR $ kubectl get nodes -L roles    OR $ kubectl get nodes --show-labesl
+
+        $ kubectl label node worker1.example.com role=database --overwrite
+
+        now if we scale up the deployment then pod will goes on worker1 & worker2 both.
+
+    3. Taint & Toleration
+
+        Node Side: Taint rules
+        Deployment Side: Toleration rules
+
+
+        ----------- Taint a Node -----------
+        $ kubectl taint nodes node_name color=green:NoSchedule
+        $ kubectl describe node node_name | grep -i taint
+
+        Now any pod without Toleration will not schedule on tainted node.
+
+        To remove taint from a node 
+        $ kubectl taint nodes node_name color=green:NoSchedule-             (use - at the end of command)
+
+        $ kubectl taint nodes node_name color=green:NoExecute   # NoExecute will migrate existing orphan pod also. 
+
+
+        ----------- To schedule nodes on tainted nodes using Toleration-----------
+        spec:
+            containers:
+                - name: nginx
+                  image: nginx
+            tolerations:
+                - key: "color"
+                  operator: "Equal"
+                  values: green
+                  effect: "NoSchedule"
+
+                OR
+            tolerations:
+                - key: "color"
+                  operator: "Exists"
+                  effect: "NoSchedule"
+
+
+        $ kubectl create -f deploy.yml
+        $ kubectl get po -owide
+
+        The default value for operator is Equal.
+        A toleration "matches" a taint if the keys are the same and the effects are the same, and:
+
+            - the operator is Exists (in which case no value should be specified), or
+            - the operator is Equal and the values are equal.
+    
+    4. Affinity & anti-Affinity rules   (Generally not used in industry)
+
+    

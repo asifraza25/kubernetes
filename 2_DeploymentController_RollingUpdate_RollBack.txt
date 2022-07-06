@@ -63,6 +63,9 @@ RC & RS can't be created with command line but deployment is possible
     $ kubectl get deploy 
 
 
+    $ kubectl delete deploy --all
+
+
 
 
 

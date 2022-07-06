@@ -1,0 +1,44 @@
+
+Networking: (Multihost Networking)
+
+Networking Requirements/expectation.
+1. Each pod should have unique ipaddress.
+2. Two pod shoud communicate on same host/Node.
+3. Two pod shoud communicate even they are runnin on different hosts/Nodes.
+4. In Pod shoud have internet access.
+5. Traffic should spin/distributed across multiple copy of pods.
+6. External world should access your application which is running inside the kubernetes pods.
+7. How dns system works in kubernetes.
+8. Pod Network security.
+
+------------------------------------------------
+Above four expectation(1-4) will fullfiled automatically.
+
+$ kubectl create deploy test --image=nginx
+$ kubectl scale --replicas=3 deploy test
+
+$ kubectl get po -o wide
+
+1. kubernetes will automatically assign an unique ip to each pods. So Requirements 1 is automatically fullfiled.
+
+2. This requirement(2) will also automatically fullfiled.
+    
+    Login to any pods
+    $ kubectl exec -it test-876ssd98 /bin/bash
+    
+    Now ping to other pods
+    $ curl other_pods_IP
+    $ ping  other_pods_IP
+
+3. This requirement(3) will also automatically fullfiled.
+
+4.  This requirement(4) will also automatically fullfiled.
+
+Note: kubernetes cluster Network works on SDN/CNI (software define Network/container Network interface) concept.
+------------------------------------------------------
+
+
+
+
+
+
