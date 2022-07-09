@@ -1,0 +1,76 @@
+
+5. Static endpoints ??
+6. Traffic should spin/distributed across multiple copy of pods. i.e loadbalancing
+
+# Service IP
+    - Kube-proxy is a software defined proxy server which manage service IP. 
+    - It is kind of static ip which is used to connect pods. 
+    - If pod deleted but service ip will never change.
+    - whenever two tier want to communicate, they always use service Ip rather than pod IP. Because pod ip is behave statically.
+    - servie IP have different pool than calico network pool. 
+        $ kubectl describe cm kube-config -n kube-system 
+            Look for serviceSubnet. This is service IP pool. 
+    
+    - Service Ip  is independent object from deployment. If we delete deployment, service object still exists and after
+      recreation it will automatically assigh same serive IP. Because service ip is assigned on pods as per Labels.     
+    
+    - Service IP also act as software load balancer. By default it uses least-connection algo of loadbalancer.
+
+    - Every nodes have a kube-proxy serivce. This proxy is connected with etcd. Etcd have details of service ip.
+      So if a pod is on worker1 wants to communicate with pods on worker2, will got to kube-proxy of worker1 then traffice directly goes to pod of worker2.
+      Hence every node works as a balancer.
+      $ kubectl get po -n kube-system -o wide | grep proxy
+Service IP are of two types.
+    1. Cluster type
+    2. portForwarding (NodePort type Service IP)
+
+
+1. Cluster type
+
+Lab1: Create a deployment and assign service ip. Delete serivice ip
+
+    $ kubectl create deploy app --image=nginx
+    $ kubectl create deploy web --image=nginx
+    $ kubectl get po -owide 
+
+    $ kubectl expose deploy web --port=80       # To assign service ip from service pools.
+    $ kubectl get service   # To get service ip 
+
+    Now if we will access after recreating (delete and create again) pod using service ip then we can access same using IP.
+
+    $ kubectl expose deploy db --port=8080 --target-port=80 --name=my-service
+        --port is port of kube-proxy
+        --target-port is port on which application is runnng.
+
+    $ kubectl describe service my-service
+
+Lab2: Deploy a app and assign service ip. then delete the app.
+      Now deploy orphan pod with same label of app. it will automatically assign the service ip of deleted app.
+
+    - If multiple pods have same labels then all will get same service ip. 
+
+    - If we modify the server ip (change name).then endpoints of all pods will be remove having same service ip.
+        # kubectl edit service my-service  
+            Now change the selector
+        $ kubectl describe service my-serive
+            All endpoints will be remove.
+
+        Hence service ip discover a pod based on selector value. Selector value should match with pod labels. 
+
+
+
+Lab3: check the loadbalancing using serive ip. 
+
+    - create two pods with diff name but having same labels
+
+    - Create service ip with selector values matching pods label.
+
+    - Now check loadbalancing using. For better change index.html file of both pods.
+       eg.  curl 10.110.84.56:8080
+
+
+
+We can alos use yaml file for creating serive ip . search service ip on kubernetes.io 
+
+
+

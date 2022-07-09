@@ -1,0 +1,91 @@
+
+Networking: (Multihost Networking)
+
+Networking Requirements/expectation.
+1. Each pod should have unique ipaddress.
+2. Two pod shoud communicate on same host/Node.
+3. Two pod shoud communicate even they are runnin on different hosts/Nodes.
+4. In Pod shoud have internet access.
+5. Traffic should spin/distributed across multiple copy of pods.
+6. External world should access your application which is running inside the kubernetes pods.
+7. How dns system works in kubernetes.
+8. Pod Network security.
+
+------------------------------------------------
+Above four expectation(1-4) will fullfiled automatically.
+
+$ kubectl create deploy test --image=nginx
+$ kubectl scale --replicas=3 deploy test
+
+$ kubectl get po -o wide
+
+1. kubernetes will automatically assign an unique ip to each pods. So Requirements 1 is automatically fullfiled.
+
+2. This requirement(2) will also automatically fullfiled.
+    
+    Login to any pods
+    $ kubectl exec -it test-876ssd98 /bin/bash
+    
+    Now ping to other pods
+    $ curl other_pods_IP
+    $ ping  other_pods_IP
+
+3. This requirement(3) will also automatically fullfiled.
+
+4.  This requirement(4) will also automatically fullfiled.
+
+Note: Above 4 Requirements are automatically fullfiled because kubernetes cluster Network works on SDN/CNI concept.
+    - SDN: Software Define Network.
+    - CNI: Container Network Interface.
+    - some example of SDN are Calico,weave,flannel, OVS
+    - Here we are using Calico as a SDN/CNI.
+    - SDN or CNI is software which works like L3 layer network. 
+
+    - Calico network has been created on each worker and master nodes.
+    - $ kubectl get po -owide -n kube-system | grep node
+        for exanple if subnet pool is 192.168.0.0/16 then it will divide pool in small subnet on each node(worker & master)
+      $ ip route    # check from master to get pool.
+      
+
+    Benefits of using Calico CDN: 
+        - It provide BGP routing protocol
+        - Calico also provide firewall. we can use it.
+
+
+#  We can define our own subnet.
+        
+        1. By chang CIDR in calico file 
+        
+            vim calico.yml
+
+            - name: CALICO_IPV4POOL_CIDR
+              value: "172.30.0.0/16"
+
+            $ kubectl create -f calico.yaml
+
+        2. By defining CIDR in command line.
+
+            $ kubadm init --pod-network-cird 172.30.0.0/16
+            $ kubectl create -f calico.yaml
+
+
+    $ kubectl describe cm -n kube-system   # To get the CIDR of a cluster. 
+
+Note:
+    - It is not presistent IP address on pod. IP changes on recreation of pods.
+    - We can also assign/bind pod directly base system ip. i.e worker/host ip.
+             
+             spec:
+                hostNetwork: true
+                containers:
+                    - name: nginx
+                      image: nginx
+
+
+------------------------------------------------------
+
+
+
+
+
+

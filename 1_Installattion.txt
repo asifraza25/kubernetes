@@ -89,7 +89,9 @@ No of Master Node in cluster are taken on Quaram formula
 
 
     
-
+To reset cluster 
+    $ kubeadm reset -f  # on all worker and master.
+    $ rm -rf /var/lib/etcd/*
 
 
 

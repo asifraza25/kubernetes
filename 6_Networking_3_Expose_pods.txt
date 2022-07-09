@@ -1,0 +1,53 @@
+7. External world should access your application which is running inside the kubernetes pods.
+
+
+There are two to expose a pods externally
+    1. portForwarding (NodePort type Service IP)
+    2. Ingress Controller Server (Not in exam)
+
+    # Now Ingress Controller is used in industies. NodePort is not in use.
+
+1. portForwarding (NodePort type Service IP)
+
+    - Here we will bind service ip port with node/host port.
+    - 
+
+    $ kubectl create serivce 
+
+
+
+Lab1: To Expose a app/pod outside cluster.
+
+    $ kubectl create deploy test --image=nginx
+
+    $ kubectl expose deploy test --port=8080 --target-port=80 --type=NodePort
+
+
+Lab2. To expose node port by user's choice.
+
+ Ans-
+    $ kubectl expose deploy test  --port=8080 --target-port=80 --type=NodePort --dyr-run -o yaml > serivce_Ip.yml
+
+------------------
+vim service_IP.yml
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test
+  name: test
+spec:
+  ports:
+  - port: 80
+    nodePort: 30001     #<------------ Define your NodePort here
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: test
+  type: NodePort
+status:
+  loadBalancer: {}
+----------------------
+

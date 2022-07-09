@@ -1,0 +1,112 @@
+How to expose service for external world using Ingress Controller.
+
+2. Ingress Controller ?? 
+
+    - It is a software defined application layer load Balancer.
+    - In kubernetes we are going to use Nginx software in ingress Controller. Ingress controller Node.
+    - In openshift users Haproxy.
+    - Now service ip will implemet on ingress controller.
+
+    Traffic flow:-
+
+           External world User -> DNS -> Load Balancer -> Ingress Controller (Rules) -> pods   
+
+
+Lab1: How to install Nginx Controller in kubernetes (One time task)
+
+    1. label the nodes which you are going to use as ingress controller.
+    $ kubectl label node worker2 role=ingress --overwrite   OR $ kubectl label node worker2 role=ingress --overwrite
+
+    2. Go to official page on nginx for ingress controller installation
+    https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-manifests/
+
+    Before Deploying the Ingress Controller(step 3) change the selector value and make hostNetwork: true
+
+        spec:
+            hostNetwork: true
+            nodeSelector:
+                role: ingress
+            serviceAccountName: ------
+
+
+Lab2: Inject rules in ingress controller. (Day to day task)
+
+After, creating Deployment and service. 
+Now we will have to inject rules. search ingress rules from kubernetes.io 
+
+
+    $ kubectl create ns ram         # create a new namespace with name ram 
+    $ kubectl deploy lab --image=nginx -n ram       # create a Deployment with name lab in ram namespace
+    $ kubectl expose deploy lab --port=8080 --target-port=80 -n ram  # Create a service ip with name lab in ram namespace
+
+-----------------------------
+vim rules.yml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress
+spec:
+  rules:
+  - host: "wwww.ram.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: lab  <--------- This is service ip name
+            port:
+              number: 8080
+
+------------------------------
+
+$ kubectl get service -n ram 
+
+$ kubectl create -f rules.yml -n ram
+
+$ kubectl describe ingress -n ram 
+
+
+for example shayam.com
+$ kubectl create -ns shyam
+$ kubectl create deploy shyamwebsite --image=nginx -n shyam
+$ kubectl expose deploy shyamwebsite --port=8080 --port=80 -n shyam
+$ kubectl apply -f shyamrules.yml   # ingress rules for shyamwebsite 
+
+
+
+
+
+
+
+---------------------------------
+If we have second deploy for ram website. like movies page.
+
+vim rules.yml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress
+spec:
+  rules:
+  - host: "wwww.ram.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: lab  <--------- This is service ip name
+            port:
+              number: 8080
+              ##### Rules2 for second website and so on 
+      - pathType: Prefix
+        path: "/movie"
+        backend:
+          service:
+            name: ram-movie  <--------- This is service ip name
+            port:
+              number: 8080
+-----------------------------------

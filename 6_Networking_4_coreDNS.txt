@@ -1,0 +1,30 @@
+
+core DNS ?? 
+
+    - kubernetes have it's own internal DNS system.
+    - service IP can be changed. So we use coreDNS for internal communication of pods.
+        $ kubectl get po -n kube-system | grep coredns
+    - check the /etc/resolve.conf file of pods. It has coredns service ip 
+        $ kubectl get service -n kube-system 
+        $ kubectl describe service -n kube-system | grep -i end 
+        $ kubectl get po -o wide -n kube-system | grep -i core
+
+    - DNS entry syntax of core dns.
+
+        - create a pod with dnsutils.search pods yaml file on kubernetes.io with name dnsutils.
+        - Now, create pod and run nslookup from inside pod.
+
+        DNS naming syntax is - ServiceName.NamespaceName.svc.cluster.local
+        SVC: ServiceName.NamespaceName.svc.cluster.local
+
+
+        
+
+
+
+        
+
+
+
+
+
