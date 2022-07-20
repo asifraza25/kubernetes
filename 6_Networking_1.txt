@@ -6,10 +6,11 @@ Networking Requirements/expectation.
 2. Two pod shoud communicate on same host/Node.
 3. Two pod shoud communicate even they are runnin on different hosts/Nodes.
 4. In Pod shoud have internet access.
-5. Traffic should spin/distributed across multiple copy of pods.
-6. External world should access your application which is running inside the kubernetes pods.
-7. How dns system works in kubernetes.
-8. Pod Network security.
+5. Static endpoints
+6. Traffic should spin/distributed across multiple copy of pods. i.e loadbalancing
+7. External world should access your application which is running inside the kubernetes pods.
+8. How dns system works in kubernetes.
+9. Pod Network security.
 
 ------------------------------------------------
 Above four expectation(1-4) will fullfiled automatically.
@@ -80,8 +81,7 @@ Note:
                 containers:
                     - name: nginx
                       image: nginx
-
-
+ 
 ------------------------------------------------------
 
 

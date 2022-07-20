@@ -1,0 +1,30 @@
+
+Volume :
+    1. shared Volume (Network based Volume)
+    2. Non shared volume (Local volume)
+
+
+
+
+Lab1 : how to provide external shared volume in k8s pod.
+
+    Create Storage for eg NFS server : Details - ip_address:/opt/nfs
+
+    Kubernetes side configuration realted to external volume: 
+        - Every storage info should be provided to API. 
+
+        Create object 
+
+            1. PVC: persistent volume claim : It request of storage by user.
+
+
+            2. PV: presistent volume: It contains your storage server information e.g NFS server
+
+                PV is consumed by PVC. 
+
+
+            pod ---> Bound to ---> PVC ----- Bound to ----> PV ----- Bound to ----> StorageServer
+
+    
+
+

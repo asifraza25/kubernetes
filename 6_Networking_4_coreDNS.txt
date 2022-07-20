@@ -18,6 +18,14 @@ core DNS ??
         SVC: ServiceName.NamespaceName.svc.cluster.local
 
 
+    Dns syntax for service(serviceIP):
+        ServiceName.NamespaceName.svc.cluster.local
+        test.default.svc.cluster.local
+
+    Dns syntax for pods:
+        IP.NamespaceName.pod.cluster.local
+        172-16-102-163.default.pod.cluster.local
+
         
 
 

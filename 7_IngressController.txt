@@ -36,7 +36,7 @@ Now we will have to inject rules. search ingress rules from kubernetes.io
 
 
     $ kubectl create ns ram         # create a new namespace with name ram 
-    $ kubectl deploy lab --image=nginx -n ram       # create a Deployment with name lab in ram namespace
+    $ kubectl create deploy lab --image=nginx -n ram       # create a Deployment with name lab in ram namespace
     $ kubectl expose deploy lab --port=8080 --target-port=80 -n ram  # Create a service ip with name lab in ram namespace
 
 -----------------------------
