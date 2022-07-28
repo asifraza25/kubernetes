@@ -22,11 +22,16 @@ Lab1: How to install Nginx Controller in kubernetes (One time task)
 
     Before Deploying the Ingress Controller(step 3) change the selector value and make hostNetwork: true
 
-        spec:
-            hostNetwork: true
-            nodeSelector:
-                role: ingress
-            serviceAccountName: ------
+    spec:
+      serviceAccountName: nginx-ingress
+      hostNetwork: true
+      nodeSelector:
+              role: ingress
+      containers:
+      - image: nginx/nginx-ingress:2.3.0
+        imagePullPolicy: IfNotPresent
+        name: nginx-ingress
+ ------
 
 
 Lab2: Inject rules in ingress controller. (Day to day task)

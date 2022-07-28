@@ -1,0 +1,111 @@
+RBAC : Role Based Access Control
+
+
+
+Role: set of Rules
+
+    rules: it define action. (Resource / action)
+                                pod       get,watch,list
+    Types of role:-
+                    1. Default Roles
+                    2. Custom Roles
+    Scope of role:-
+                    1. cluster level
+                    2. Namespace Level 
+
+User: 
+    In k8s there is two method to authenticate users
+    1. Certificate Based.
+    2. Id and Password Based (External authentication). Like ldap or AD server based. 
+
+    Operating system users can't authenticate k8s api.
+
+Rolebinding: Maping a role with a user is called rolebinding.
+
+            1. Cluster level rolebinding
+            2. Namespace level rolebinding
+
+
+Practical.
+
+Lab1: Configure certificate based authentication for users.
+
+    Master certificate path /etc/kubernetes/pki/
+
+    cp /etc/kubernetes/pki/ca.crt ./
+    cp /etc/kubernetes/pki/ca.key ./
+
+    command to sign a certificate:- https://github.com/ddometita/mmumshad-kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
+
+    The Admin Client Certificate
+    Generate the admin client certificate and private key:
+
+    # Geenrate private key for asif user
+    openssl genrsa -out asif.key 2048
+
+    # Generate CSR for asif user. Note the OU.
+    openssl req -new -key asif.key -subj "/CN=asif/O=AnyName" -out asif.csr
+
+    # Sign certificate for asif user using CA servers private key
+    openssl x509 -req -in asif.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out asif.crt -days 365
+
+
+
+    To provide files to asif user - asif.crt asif.key ca.crt 
+    To provide single file cert to asif user edit /etc/kubernetes/admin.conf and paste asif crt key and ca and key 
+
+    cat ca.crt | base64 -wO 
+        inter in certficate authority
+
+    cat asif.crt| base64 -wO
+     client-
+
+     cat asif.key| base64 -wO
+        key - 
+
+    cp asif.conf .kube/config
+
+    kubectl get nodes
+
+
+How to rolebinding? 
+
+    kubectl get clusterrole
+
+    kubectl create clusterrolebinding test-asif --clusterrole=cluster-admin --user=asif
+
+    kubectl get clusterrolebinding | grep ram 
+
+    kubectl delete clusterrolebinding test-asif 
+
+    To create a project admin to asif user.
+
+    kubectl create ns pre-prod 
+    kubectl create rolebinding test-asif --clusterrole=admin --user=asif -n pre-prod 
+
+    Now test,
+
+    kubectl get nodes 
+    kubectl get pods -n pre-prod 
+
+    change default namespace of asif
+    vim .kube/config 
+                name: asif
+                namespace: pre-prod
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

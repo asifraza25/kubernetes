@@ -93,13 +93,3 @@ To reset cluster
     $ kubeadm reset -f  # on all worker and master.
     $ rm -rf /var/lib/etcd/*
 
-
-
-
-
-
-
-
-
-
-
