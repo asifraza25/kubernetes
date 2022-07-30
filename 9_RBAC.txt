@@ -54,13 +54,13 @@ Lab1: Configure certificate based authentication for users.
     To provide files to asif user - asif.crt asif.key ca.crt 
     To provide single file cert to asif user edit /etc/kubernetes/admin.conf and paste asif crt key and ca and key 
 
-    cat ca.crt | base64 -wO 
+    cat ca.crt | base64 -w0
         inter in certficate authority
 
-    cat asif.crt| base64 -wO
+    cat asif.crt| base64 -w0
      client-
 
-     cat asif.key| base64 -wO
+     cat asif.key| base64 -w0
         key - 
 
     cp asif.conf .kube/config
@@ -68,7 +68,7 @@ Lab1: Configure certificate based authentication for users.
     kubectl get nodes
 
 
-How to rolebinding? 
+Lab2: How to rolebinding? 
 
     kubectl get clusterrole
 
@@ -81,6 +81,7 @@ How to rolebinding?
     To create a project admin to asif user.
 
     kubectl create ns pre-prod 
+    
     kubectl create rolebinding test-asif --clusterrole=admin --user=asif -n pre-prod 
 
     Now test,
@@ -89,12 +90,58 @@ How to rolebinding?
     kubectl get pods -n pre-prod 
 
     change default namespace of asif
-    vim .kube/config 
+    vim ~/.kube/config 
                 name: asif
                 namespace: pre-prod
 
 
+Lab3: Develop custom Roles. 
 
+    Q. Develop a role by which user can see pods in all namespace/cluster.
+
+        $ kubectl create clusterrole pod-reader --resource=pod --verb=get 
+
+        $ kubectl get clusterrole | grep pod-reader 
+
+
+
+
+    Q. Develop a role by which user can see,create and delete pods & service  in all namespace/cluster.
+
+        $ kubectl create clusterrole asif_clusterrole --resource=pod,service --verb=list,watch,get,create,delete,update
+
+        $ kubectl describe clusterrole asif_clusterrole 
+
+        $ kubectl edit clusterrole asif_clusterrole         # To edit existing role
+
+    Q. Rolebinding with users.
+
+        $ kubectl create clusterrolebinding asif-pod-reader --clusterrole=asif_clusterrole --user=asif
+
+                    Now, Asif can perform all action mentioned in clusterrole asif_clusterrole on whole cluster.
+
+        
+        $ kubectl create clusterrolebinding asif-pod-reader --clusterrole=asif_clusterrole --user=asif -n pre-prod
+
+                    Now, Asif can perform all action mentioned in clusterrole asif_clusterrole on namespace pre-prod only.
+
+
+    Q. Create a namespace level role.
+
+        $ kubectl create role dev-role --resource=pod,service --verb=list,watch,get,create,delete,update -n dev 
+
+            Namespace level roles can be assigned only on same namespace. 
+
+        $ kubectl create rolebinding asif-dev --role=dev-role --user=asif -n dev 
+
+        
+
+
+
+
+
+
+    
 
 
 
