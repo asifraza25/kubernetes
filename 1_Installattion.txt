@@ -53,6 +53,16 @@ No of Master Node in cluster are taken on Quaram formula
         Now install 4 component using kubeadm
             $ kubeadm init
 
+ERROR CRI]: container runtime is not running: output: time="2023-07-20T17:47:01Z" level=fatal msg="validate service connection: CRI v1 runtime API is not implemented for endpoint \"unix:///var/run/containerd/containerd.sock\": rpc error: code = Unimplemented desc = unknown service runtime.v1.RuntimeService"
+, error: exit status 1
+
+Remove /etc/containerd/config.toml and restart containerd
+root@master:~# rm /etc/containerd/config.toml
+root@master:~# systemctl restart containerd
+
+
+
+
     verify the installation
         - $ netstat -tlpn   (etcd, kube-proxy, kbelet, api-controller, kube-Scheduler)
         - $ kubectl get nodes
